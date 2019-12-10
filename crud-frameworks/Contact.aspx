@@ -75,7 +75,7 @@
                     <asp:TemplateField>
                         <ItemTemplate>
                             <asp:LinkButton ID="lnkView" runat="server" 
-                                CommandArgument='<% Eval("ContactID") %>'>View</asp:LinkButton>
+                                CommandArgument='<%# Eval("ContactID") %>' OnClick="lnkView_Click">View</asp:LinkButton>
                         </ItemTemplate>
                     </asp:TemplateField>
                 </Columns>   

@@ -19,6 +19,7 @@ namespace crud_frameworks
             if (!IsPostBack)
             {
                 btnDelete.Enabled = false;
+                fillGridView();
             }
         }
 
@@ -58,15 +59,48 @@ namespace crud_frameworks
                 {
                     lblSuccessMessage.Text = "Upsated Successfully";
                 }
+                fillGridView();
+            }            
+        }
+
+        void fillGridView()
+        {
+            if (sqlCon.State == ConnectionState.Closed)
+            {
+                sqlCon.Open();
+                SqlDataAdapter sqlAda = new SqlDataAdapter("ContactViewAll", sqlCon);
+                sqlAda.SelectCommand.CommandType = CommandType.StoredProcedure;
+                DataTable dtbl = new DataTable();
+                sqlAda.Fill(dtbl);
+                sqlCon.Close();
+                gvContact.DataSource = dtbl;
+                gvContact.DataBind();
             }
 
-            void fillGridView()
-            {
-                if (sqlCon.State == ConnectionState.Closed)
-                {
-                    sqlCon.Open();
-                }
+        }
 
+        protected void lnkView_Click(object sender, EventArgs e)
+        {
+            int contactID = Convert.ToInt32((sender as LinkButton).CommandArgument);
+
+            if (sqlCon.State == ConnectionState.Closed)
+                sqlCon.Open();
+
+                SqlDataAdapter sqlAda = new SqlDataAdapter("ContactViewByID", sqlCon);
+                sqlAda.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlAda.SelectCommand.Parameters.AddWithValue("@ContactID", contactID);
+                DataTable dtbl = new DataTable();
+                sqlAda.Fill(dtbl);
+                sqlCon.Close();
+
+                hfContactID.Value = contactID.ToString();
+
+                txtName.Text = dtbl.Rows[0]["Name"].ToString();
+                txtCellPhone.Text = dtbl.Rows[0]["CellPhone"].ToString();
+                txtAddrss.Text = dtbl.Rows[0]["Addrss"].ToString();
+
+                btnSave.Text = "Update";
+                btnDelete.Enabled = true;
         }
     }
 }
