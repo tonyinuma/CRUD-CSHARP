@@ -49,15 +49,16 @@ namespace crud_frameworks
                 sqlCmd.Parameters.AddWithValue("@Cellphone", txtCellPhone.Text.Trim());
                 sqlCmd.Parameters.AddWithValue("@Addrss", txtAddrss.Text.Trim());
                 sqlCmd.ExecuteNonQuery();
+                string contactID = hfContactID.Value;
                 sqlCon.Close();
                 Clear();
-                if (hfContactID.Value == "")
+                if (contactID == "")
                 {
                     lblSuccessMessage.Text = "Saved Successfully";
                 }
                 else
                 {
-                    lblSuccessMessage.Text = "Upsated Successfully";
+                    lblSuccessMessage.Text = "Updated Successfully";
                 }
                 fillGridView();
             }            
@@ -101,6 +102,22 @@ namespace crud_frameworks
 
                 btnSave.Text = "Update";
                 btnDelete.Enabled = true;
+        }
+
+        protected void btnDelete_Click(object sender, EventArgs e)
+        {
+            if (sqlCon.State == ConnectionState.Closed)
+                sqlCon.Open();
+                
+            SqlCommand sqlCmd = new SqlCommand("ContactDeleteByID", sqlCon);
+            sqlCmd.CommandType = CommandType.StoredProcedure;
+            sqlCmd.Parameters.AddWithValue("@ContactID",Convert.ToInt32(hfContactID.Value));
+            sqlCmd.ExecuteNonQuery();
+            sqlCon.Close();
+            Clear();
+            fillGridView();
+            lblSuccessMessage.Text = "Deleted Successfully";
+           
         }
     }
 }
